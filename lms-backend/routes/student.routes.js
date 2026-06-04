@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const studentService = require("../services/student.service");
 
-router.post("/add-student", studentService.addStudent);
+router.post("/students", studentService.addStudent);
+router.get("/students", studentService.getStudent);
 
 module.exports = router;

@@ -51,4 +51,4 @@ const getStudent=async(req,res)=>{
     }
 }
 
-module.exports = { addStudent };
+module.exports = { addStudent, getStudent };
