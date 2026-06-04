@@ -10,7 +10,7 @@ function Student() {
     // get all students
     const getStudents=async()=>{
         try{
-            const res=await axios.get("http://localhost:5000/api/students");
+            const res=await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/students`);
             setStudents(res.data);
         }catch(error){
             console.log(error);
@@ -38,10 +38,10 @@ function Student() {
             <tbody>
                 {students.map((value, key)=>(
                     <tr key={key}>
-                    {/* <td>{value.name}</td>
+                     <td>{value.name}</td>
                     <td>{value.grade}</td>
                     <td>{value.email}</td>
-                    <td>{value.phone no}</td> */}
+                    <td>{value.phone }</td> 
                     <td></td>
 
                     </tr>
