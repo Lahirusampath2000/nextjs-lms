@@ -138,9 +138,9 @@ function Student() {
               <td className="px-6 py-4 text-gray-800">{student.email}</td>
               <td className="px-6 py-4 text-gray-800">{student.phone}</td>
               <td className="px-6 py-4">
-                <button className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600">
+                {/* <button className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600">
                   Edit
-                </button>
+                </button> */}
                 <button className="px-3 ml-2 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600" 
                 onClick={()=>deleteStudent(student.id)}>
                   Delete
