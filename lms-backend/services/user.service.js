@@ -2,6 +2,8 @@ const pool = require("../config/database");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
+
+//register user
 const registerUser = async (req, res) => {
     try{
         const {name, email, password} = req.body;
@@ -43,3 +45,64 @@ const registerUser = async (req, res) => {
     }
     
 }
+
+//login user
+const loginUser = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        //validate email and password
+        if (!email || !password) {
+            return res.status(400).json({
+                success: false,
+                message: "Missing fields"
+            });
+        }
+        //check user exists
+        const userResult = await pool.query(
+            `SELECT * FROM users WHERE email=$1`,
+            [email]
+        );
+
+        if (userResult.rows.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid credentials"
+            });
+        }
+
+        const user = userResult.rows[0];
+        //check password
+        const validPassword = await bcrypt.compare(password, user.password);
+
+        if (!validPassword) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid credentials"
+            });
+        }
+        //create token
+        const token = jwt.sign(
+            { id: user.id },
+            process.env.JWT_SECRET,
+            { expiresIn: "1d" }
+        );
+
+        return res.status(200).json({
+            success: true,
+            user: {
+                id: user.id,
+                name: user.name,
+                email: user.email
+            },
+            token
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            message: "Server error"
+        });
+    }
+};
