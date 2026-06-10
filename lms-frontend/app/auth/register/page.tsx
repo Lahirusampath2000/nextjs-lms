@@ -44,6 +44,7 @@ function Register() {
             className="w-full border p-3 rounded"
             value={name}
             onChange={(e) => setName(e.target.value)}
+            required
           />
 
           <input
@@ -52,6 +53,7 @@ function Register() {
             className="w-full border p-3 rounded"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            required
           />
 
           <input
@@ -60,6 +62,7 @@ function Register() {
             className="w-full border p-3 rounded"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
           />
 
           <input
@@ -68,6 +71,7 @@ function Register() {
             className="w-full border p-3 rounded"
             value={role}
             onChange={(e) => setRole(e.target.value)}
+            required
           />
 
           <input
@@ -76,6 +80,7 @@ function Register() {
             className="w-full border p-3 rounded"
             value={grade}
             onChange={(e) => setGrade(e.target.value)}
+            required
           />
 
           <button
