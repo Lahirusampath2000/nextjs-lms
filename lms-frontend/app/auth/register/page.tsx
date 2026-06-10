@@ -3,14 +3,6 @@ import { useState } from "react";
 import React from "react";
 import axios from "axios";
 
-
-type registerType = {
-  name: string;
-  email: string;
-  password: string;
-  role: string;
-  grade: string;
-}
 function register() {
     //usestate
     const [name, setName] = useState<string>("");
