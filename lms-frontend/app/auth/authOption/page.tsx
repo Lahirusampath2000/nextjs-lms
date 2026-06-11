@@ -38,7 +38,7 @@ function AuthOption() {
             </div>
             <button
                 className="bg-indigo-950 text-white py-2 px-4 rounded-md hover:bg-indigo-800 transition-colors duration-300"
-                onClick={()=>router.push("auth/register?role=student")}
+                onClick={() => router.push("/auth/register?role=student")}
             >
                 Join as a Student 
             </button>
@@ -66,8 +66,15 @@ function AuthOption() {
             <p className="text-sm text-gray-500 leading-relaxed max-w-xs">
               Create lessons, manage your students, and deliver impactful education.
             </p>
-          </div>
-          
+        </div>
+
+          <button
+           className="bg-indigo-950 text-white py-2 px-4 rounded-md hover:bg-indigo-800 transition-colors duration-300"
+            onClick={() => router.push("/auth/register?role=teacher")}
+            
+          >
+            Continue as Teacher 
+          </button>
  
         </div>
 
