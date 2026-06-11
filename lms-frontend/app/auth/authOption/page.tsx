@@ -51,7 +51,15 @@ function AuthOption() {
         {/* ── decorative bubbles ── */}
         <div className="absolute -top-12 -right-12 w-56 h-56 rounded-full bg-fuchsia-200/30 pointer-events-none" />
         <div className="absolute bottom-4 left-4 w-44 h-44 rounded-full bg-violet-200/30 pointer-events-none" />
- 
+        <div className="relative flex flex-col items-center text-center gap-6 z-10">
+        <div className="w-40 h-40 rounded-2xl bg-white shadow-md flex items-center justify-center overflow-hidden group-hover:scale-110 transition-transform duration-300">
+            <img
+                src="/authOption/teacher-join.jpg"
+                alt="Teacher Icon"
+                className="w-30 h-30 object-contain"
+            />
+        </div>
+        </div>
 
         </div>
 
