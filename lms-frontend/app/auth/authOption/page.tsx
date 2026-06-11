@@ -9,7 +9,7 @@ function AuthOption() {
 
   return (
     <div className="min-h-screen flex font-sans overflow-hidden">
-        {/* ── Left Panel ── */}
+        {/* ── Left Panel student section── */}
         <div className="relative w-1/2 flex flex-col items-center justify-center px-12 py-16 bg-gradient-to-br from-indigo-50 via-indigo-100 to-violet-100 group transition-all duration-500 hover:from-indigo-100 hover:via-indigo-200 hover:to-violet-200">
             {/* ── decorative bubbles ── */}
             <div className="absolute -top-16 -left-16 w-64 h-64 rounded-full bg-indigo-200/40 pointer-events-none" />
@@ -44,6 +44,10 @@ function AuthOption() {
             </button>
             
             </div>
+
+        </div>
+        {/* ── Right Panel teacher section── */}
+        <div className="relative w-1/2 flex flex-col items-center justify-center px-12 py-16 bg-gradient-to-br from-violet-50 via-purple-100 to-fuchsia-100 group transition-all duration-500 hover:from-violet-100 hover:via-purple-200 hover:to-fuchsia-200">
 
         </div>
 
