@@ -59,6 +59,16 @@ function AuthOption() {
                 className="w-30 h-30 object-contain"
             />
         </div>
+        <div>
+            <h2 className="text-2xl font-bold text-violet-950 tracking-tight mb-2">
+              Join as a Teacher
+            </h2>
+            <p className="text-sm text-gray-500 leading-relaxed max-w-xs">
+              Create lessons, manage your students, and deliver impactful education.
+            </p>
+          </div>
+          
+ 
         </div>
 
         </div>
