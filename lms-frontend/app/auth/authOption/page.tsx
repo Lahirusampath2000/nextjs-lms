@@ -48,6 +48,10 @@ function AuthOption() {
         </div>
         {/* ── Right Panel teacher section── */}
         <div className="relative w-1/2 flex flex-col items-center justify-center px-12 py-16 bg-gradient-to-br from-violet-50 via-purple-100 to-fuchsia-100 group transition-all duration-500 hover:from-violet-100 hover:via-purple-200 hover:to-fuchsia-200">
+        {/* ── decorative bubbles ── */}
+        <div className="absolute -top-12 -right-12 w-56 h-56 rounded-full bg-fuchsia-200/30 pointer-events-none" />
+        <div className="absolute bottom-4 left-4 w-44 h-44 rounded-full bg-violet-200/30 pointer-events-none" />
+ 
 
         </div>
 
