@@ -85,6 +85,15 @@ function AuthOption() {
           <span className="text-xs font-bold text-gray-400">OR</span>
         </div>
       </div>
+        {/* ── sign in link── */}
+       <div className="absolute bottom-6 left-0 right-0 text-center z-20">
+        <p className="text-sm text-gray-500">
+          Already have an account?{" "}
+          <a href="/auth/login" className="text-indigo-600 font-medium hover:underline">
+            Sign in
+          </a>
+        </p>
+      </div>
 
 
     </div>
