@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import React from "react";
-import { useSearchParams } from "next/navigation";
+import {useRouter, useSearchParams } from "next/navigation";
 import api from "@/lib/axios";
 
 function Register() {
@@ -9,24 +9,31 @@ function Register() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [grade, setGrade] = useState<string>("");
+  const [error, setError] = useState<string>("");
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   //read role from query params
   const searchParams = useSearchParams();
-  const role = searchParams.get("role")||"student";
+  const role = searchParams.get("role") as "student" | "teacher" || "student";
+  const isStudent = role === "student";
 
   const register = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
+    setLoading(true);
     try {
-      const payload = { name, email, password, role, grade: role === "student" ? grade : null };
+      const payload = { name, email, password, role, grade: isStudent ? grade : null  };
       const res = await api.post(
         `${process.env.NEXT_PUBLIC_API_URL}/api/register`,
         payload
       );
-      alert("Registration successful");
+      router.push("/auth/login");
       console.log(res.data);
-    } catch (error:any) {
-      console.error(error);
-      alert(error.response?.data?.message || "Registration failed");
+    } catch (error: any) {
+      setError(error.response?.data?.message || "Registration failed");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -70,8 +77,8 @@ function Register() {
         <div className="w-full max-w-sm">
 
           {/* Header */}
-          <h1 className="text-xl font-bold text-gray-900 tracking-tight mb-1">
-            Create your account
+         <h1 className="text-xl font-bold text-gray-900 tracking-tight mb-1">
+            Create your {role} account
           </h1>
           <p className="text-sm text-gray-500 mb-8">
             Already have one?{" "}
@@ -122,20 +129,28 @@ function Register() {
             </div>
 
             {/* Grade */}
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-medium text-gray-600">Grade</label>
-              <select
-                value={grade}
-                onChange={(e) => setGrade(e.target.value)}
-                required
-                className="h-10 px-3 text-sm bg-gray-50 border border-gray-200 rounded-lg text-gray-900 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 focus:bg-white transition-all cursor-pointer appearance-none"
-              >
-                <option value="" disabled>Select your grade</option>
-                {["Grade 6", "Grade 7", "Grade 8", "Grade 9", "Grade 10", "Grade 11", "Grade 12"].map((g) => (
-                  <option key={g} value={g}>{g}</option>
-                ))}
-              </select>
-            </div>
+             {isStudent && (
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-medium text-gray-600">Grade</label>
+                <select
+                  value={grade}
+                  onChange={(e) => setGrade(e.target.value)}
+                  required
+                  className="h-10 px-3 text-sm bg-gray-50 border border-gray-200 rounded-lg text-gray-900 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 focus:bg-white transition-all cursor-pointer appearance-none"
+                >
+                  <option value="" disabled>Select your grade</option>
+                  {["Grade 6","Grade 7","Grade 8","Grade 9","Grade 10","Grade 11","Grade 12"].map((g) => (
+                    <option key={g} value={g}>{g}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+            {/*error message*/}
+            {error && (
+              <p className="text-xs text-red-500 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
+                {error}
+              </p>
+            )}
 
             {/* Submit */}
             <button
