@@ -4,7 +4,12 @@ export function saveAuth(token: string, user: { id: number; name: string; role: 
   localStorage.setItem("role", user.role);
   localStorage.setItem("user", JSON.stringify(user));
 }
-
+//get user from localstorage
+export function getUser() {
+  if (typeof window === "undefined") return null;
+  const user = localStorage.getItem("user");
+  return user ? JSON.parse(user) : null;
+}
 
 export function getTokenPayload() {
   const token = localStorage.getItem("token");
