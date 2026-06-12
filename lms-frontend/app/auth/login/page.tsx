@@ -23,12 +23,11 @@ function Login() {
       );
       const{token, user}=res.data;
       saveAuth(token, user);
-      console.log(res.data);
-      localStorage.setItem("token", res.data.token);
       alert("Login successful");
     } catch (error: any) {
-      console.error(error);
-      alert(error.response?.data?.message || "Login failed");
+      setError(error.response?.data?.message || "Login failed");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -113,7 +112,12 @@ function Login() {
                 className="h-10 px-3 text-sm bg-gray-50 border border-gray-200 rounded-lg text-gray-900 placeholder:text-gray-400 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 focus:bg-white transition-all"
               />
             </div>
-
+            {/* error message */}
+            {error && (
+              <p className="text-xs text-red-500 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
+                {error}
+              </p>
+            )}
             {/* Submit */}
             <button
               type="submit"
