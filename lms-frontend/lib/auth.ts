@@ -1,3 +1,11 @@
+//save after login
+export function saveAuth(token: string, user: { id: number; name: string; role: string; grade?: string }) {
+  localStorage.setItem("token", token);
+  localStorage.setItem("role", user.role);
+  localStorage.setItem("user", JSON.stringify(user));
+}
+
+
 export function getTokenPayload() {
   const token = localStorage.getItem("token");
   if (!token) return null;
@@ -13,3 +21,4 @@ export function getTokenPayload() {
     return null;
   }
 }
+
