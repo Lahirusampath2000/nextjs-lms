@@ -1,7 +1,8 @@
 "use client";
 import { useState } from "react";
 import React from "react";
-import axios from "axios";
+import { useSearchParams } from "next/navigation";
+import api from "@/lib/axios";
 
 function Register() {
   const [name, setName] = useState<string>("");
@@ -9,18 +10,23 @@ function Register() {
   const [password, setPassword] = useState<string>("");
   const [grade, setGrade] = useState<string>("");
 
+  //read role from query params
+  const searchParams = useSearchParams();
+  const role = searchParams.get("role")||"student";
+
   const register = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const payload = { name, email, password, role: "student", grade };
-      const res = await axios.post(
+      const payload = { name, email, password, role, grade: role === "student" ? grade : null };
+      const res = await api.post(
         `${process.env.NEXT_PUBLIC_API_URL}/api/register`,
         payload
       );
       alert("Registration successful");
       console.log(res.data);
-    } catch (error) {
+    } catch (error:any) {
       console.error(error);
+      alert(error.response?.data?.message || "Registration failed");
     }
   };
 
