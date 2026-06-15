@@ -1,5 +1,6 @@
 import React from 'react'
 import Image from "next/image";
+import Link from "next/link";
 
 function Herosection() {
   return (
@@ -21,9 +22,11 @@ function Herosection() {
           </p>
 
           <div className="flex gap-3 mt-8">
-            <button className="bg-transparent text-violet-900 border border-violet-600 mx-35 px-6 py-3 rounded-lg text-base font-medium hover:bg-violet-100/40 transition-colors">
-              Get started
-            </button>
+            <Link href="/auth/authOption">
+                <button className="bg-transparent text-violet-900 border border-violet-600 mx-35 px-6 py-3 rounded-lg text-base font-medium hover:bg-violet-100/40 transition-colors cursor-pointer">
+                    Get started
+                </button>
+            </Link>
             {/* <button className="bg-transparent text-violet-900 border border-violet-600 px-6 py-3 rounded-lg text-base font-medium hover:bg-violet-100/40 transition-colors">
               Learn more
             </button> */}
