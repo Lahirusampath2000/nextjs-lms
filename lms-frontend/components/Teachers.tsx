@@ -4,6 +4,13 @@ import React from 'react'
 import { useEffect, useState } from 'react'
 import api from '../lib/axios'
 
+interface teacherType{
+    id:number;
+    name:string;
+    email:string;
+    phone:string;
+}
+
 function Teachers() {
 
     const [teachers, setTeachers] = useState([]);
