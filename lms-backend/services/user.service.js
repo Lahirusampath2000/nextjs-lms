@@ -45,13 +45,25 @@ const registerUser = async (req, res) => {
         //if user role= student save to student table
         if (user.role === "student") {
             await pool.query(
-                `INSERT INTO students (user_id, student_number, grade, phone)
-                 VALUES ($1, $2, $3, $4)`,
+                `INSERT INTO students (user_id, student_number, grade)
+                 VALUES ($1, $2, $3)`,
                 [
                     user.id,
                     "STU-" + Date.now(),
                     grade || null,
-                    phone || null
+                    
+                ]
+            );
+        }
+
+        //if user role= teacher save to teacher table
+        if (user.role === "teacher") {
+            await pool.query(
+                `INSERT INTO teachers (user_id, subject)
+                 VALUES ($1, $2)`,
+                [
+                    user.id,
+                    subject || null
                 ]
             );
         }
