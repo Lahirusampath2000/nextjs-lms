@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 //register user
 const registerUser = async (req, res) => {
     try{
-        const {name, email, password, role, grade} = req.body;
+        const {name, email, password, role, subject, grade} = req.body;
         //validation
         if(!name || !email || !password){
             return res.status(400).json({
@@ -19,6 +19,7 @@ const registerUser = async (req, res) => {
         const existingUser = await pool.query(
             `SELECT * FROM users WHERE email=$1`,
             [email]);
+
         if(existingUser.rows.length > 0){
             return res.status(400).json({
                 success:false,
@@ -27,7 +28,8 @@ const registerUser = async (req, res) => {
         }
         //hashed password
         const hashedPassword = await bcrypt.hash(password, 10);
-         const result = await pool.query(
+
+         const userResult = await pool.query(
             `INSERT INTO users (name, email, password, role, grade)
              VALUES ($1, $2, $3, $4, $5)
              RETURNING id, name, email, role, grade`,
@@ -39,7 +41,21 @@ const registerUser = async (req, res) => {
                 grade || null
             ]
         );
-        const user = result.rows[0];
+        const user = userResult.rows[0];
+        //if user role= student save to student table
+        if (user.role === "student") {
+            await pool.query(
+                `INSERT INTO students (user_id, student_number, grade, phone)
+                 VALUES ($1, $2, $3, $4)`,
+                [
+                    user.id,
+                    "STU-" + Date.now(),
+                    grade || null,
+                    phone || null
+                ]
+            );
+        }
+
         return res.status(201).json({
             success:true,
             user
