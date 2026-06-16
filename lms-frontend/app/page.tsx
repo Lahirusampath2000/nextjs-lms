@@ -2,6 +2,7 @@ import Image from "next/image";
 import Herosection from "@/components/Herosection";
 import Featured from "@/components/Featured";
 import Teachers from "@/components/Teachers";
+import Footer from "@/components/Footer";
 
 export default function Home() {
   return (
@@ -9,6 +10,7 @@ export default function Home() {
       <Herosection />
       <Featured />
       <Teachers />
+      <Footer />
     
     </div>
   );
