@@ -42,6 +42,14 @@ function MultiStepForm({teacherId}:AddCourseFormProps) {
         setErrorMsg("course name and grade required")  //throw error if name and grade empty
         return;
     }
+    setErrorMsg("")
+    if(step<3) setStep(step+1)  //if success go to next step
   }
+
+  const prevStep=()=>{
+    setErrorMsg("")
+    if(step>1)  setStep(step-1)  //redirect previous step if not error
+  }
+
 
 }
