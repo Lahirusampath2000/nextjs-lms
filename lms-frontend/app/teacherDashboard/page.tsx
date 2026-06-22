@@ -21,6 +21,17 @@ function TeacherDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const fetchCourses = async () => {
+    try {
+      const res = await api.get(`${process.env.NEXT_PUBLIC_API_URL}/api/courses/teacher/${user?.id}`);
+      setCourses(res.data.courses || []);
+    } catch (error: any) {
+      setError(error.response?.data?.message || "Failed to fetch courses");
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
 
 
