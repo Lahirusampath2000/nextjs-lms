@@ -1,5 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import {useRouter} from "next/navigation";
+import { getUser} from "@/lib/auth";
+import api from "@/lib/axios";
 
 interface Course{
   id: number;
@@ -13,6 +15,11 @@ interface Course{
 }
 
 function TeacherDashboard() {
+  const router = useRouter();
+  const user = getUser();
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
 
 
@@ -20,7 +27,7 @@ function TeacherDashboard() {
 
 
 
-  
+
   return (
     <div>page</div>
   )
