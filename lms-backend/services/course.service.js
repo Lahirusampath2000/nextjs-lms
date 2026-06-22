@@ -13,7 +13,7 @@ const generateCourseCode = (courseName) => {
  
     return `${prefix}-${random}`;
 };
-
+ 
 const generateUniqueCourseCode = async (courseName) => {
     const MAX_ATTEMPTS = 5;
  
@@ -32,59 +32,60 @@ const generateUniqueCourseCode = async (courseName) => {
  
     throw new Error("Could not generate a unique course code, please try again");
 };
+ 
 const addCourse = async (req, res) => {
     try {
-        const{teacher_id,course_name, course_code, description, grade}=req.body;
-
-        //validation
-        if(!teacher_id || !course_name || !course_code){
+        const { teacher_id, course_name, description, grade } = req.body;
+ 
+        // validation
+        if (!teacher_id || !course_name || !grade) {
             return res.status(400).json({
-                success:false,
-                message:"Missing fields"
+                success: false,
+                message: "Missing fields"
             });
         }
-        //check teacher exist
-        const teacherResult= await pool.query(
+ 
+        // check teacher exist
+        const teacherResult = await pool.query(
             `SELECT * FROM users WHERE id=$1`,
             [teacher_id]
         );
-
-        if(teacherResult.rows.length === 0){
+ 
+        if (teacherResult.rows.length === 0) {
             return res.status(400).json({
-                success:false,
-                message:"Teacher not found"
+                success: false,
+                message: "Teacher not found"
             });
         }
-
-        
+ 
         const videoFile = req.files?.video?.[0];
         const thumbnailFile = req.files?.thumbnail?.[0];
  
         const video_url = videoFile ? `/uploads/${videoFile.filename}` : null;
         const thumbnail_url = thumbnailFile ? `/uploads/${thumbnailFile.filename}` : null;
  
-        // generate a unique course code on the backend
+        // generate a unique course code 
         const course_code = await generateUniqueCourseCode(course_name);
-
-        //insert course data to table
+ 
+        // insert course data to table
         const result = await pool.query(
             `INSERT INTO courses
-             (teacher_id, course_name, course_code, description, grade) 
-             VALUES ($1, $2, $3, $4, $5)
+             (teacher_id, course_name, course_code, description, grade, video_url, thumbnail_url)
+             VALUES ($1, $2, $3, $4, $5, $6, $7)
               RETURNING *`,
-            [teacher_id, course_name, course_code, description, grade]
+            [teacher_id, course_name, course_code, description, grade, video_url, thumbnail_url]
         );
-
+ 
         return res.status(201).json({
-            success:true,
-            course:result.rows[0]
+            success: true,
+            course: result.rows[0]
         });
-        
+ 
     } catch (error) {
         console.log(error);
         return res.status(500).json({
-            success:false,
-            message:"Server error"
+            success: false,
+            message: "Server error"
         });
     }
 }
