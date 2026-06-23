@@ -2,9 +2,11 @@ const express = require("express");
 const router = express.Router();
 const courseService = require("../services/course.service");
 const upload = require("../config/multer");
+const verifyToken = require("../util/jwt");
 
 router.post(
     "/courses",
+    verifyToken,
     upload.fields([
         { name: "video", maxCount: 1 },
         { name: "thumbnail", maxCount: 1 },

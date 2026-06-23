@@ -2,6 +2,7 @@ const pool = require("../config/database");
 const crypto = require("crypto");
 
 
+
 // generate course code 
 const generateCourseCode = (courseName) => {
     const prefix = (courseName || "CRS")
@@ -35,10 +36,11 @@ const generateUniqueCourseCode = async (courseName) => {
  
 const addCourse = async (req, res) => {
     try {
-        const { teacher_id, course_name, description, grade } = req.body;
+        const user_id = req.userId;
+        const {  course_name, description, grade } = req.body;
  
         // validation
-        if (!teacher_id || !course_name || !grade) {
+        if (!user_id || !course_name || !grade) {
             return res.status(400).json({
                 success: false,
                 message: "Missing fields"
@@ -47,8 +49,8 @@ const addCourse = async (req, res) => {
  
         // check teacher exist
         const teacherResult = await pool.query(
-            `SELECT * FROM users WHERE id=$1`,
-            [teacher_id]
+            `SELECT id FROM teachers WHERE user_id=$1`,
+            [user_id]
         );
  
         if (teacherResult.rows.length === 0) {
@@ -57,7 +59,7 @@ const addCourse = async (req, res) => {
                 message: "Teacher not found"
             });
         }
- 
+        const teacher_id = teacherResult.rows[0].id; 
         const videoFile = req.files?.video?.[0];
         const thumbnailFile = req.files?.thumbnail?.[0];
  
