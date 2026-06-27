@@ -51,6 +51,10 @@ export default function CourseCard({ course }: CourseCardProps) {
   const router = useRouter();
   const gs = gradeStyle(course.grade);
 
+  const handleBuyNow = () => {
+    router.push(`/courses/${course.id}?action=buy`);
+  };
+
   return (
     <div className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg hover:shadow-indigo-100/60 hover:-translate-y-1 transition-all duration-300 flex flex-col">
       <div className="relative h-44 overflow-hidden bg-gray-100">
@@ -79,12 +83,18 @@ export default function CourseCard({ course }: CourseCardProps) {
         </p>
       </div>
 
-      <div className="px-5 pb-5">
+      <div className="px-5 pb-5 flex gap-2">
         <button
           onClick={() => router.push(`/courses/${course.id}`)}
-          className="w-full h-9 bg-indigo-950 hover:bg-indigo-800 active:scale-[0.98] text-white text-sm font-semibold rounded-lg transition-all duration-200 cursor-pointer"
+          className="flex-1 h-9 bg-white hover:bg-gray-50 active:scale-[0.98] text-indigo-950 text-sm font-semibold rounded-lg border border-gray-200 hover:border-indigo-200 transition-all duration-200 cursor-pointer"
         >
           View Course
+        </button>
+        <button
+          onClick={handleBuyNow}
+          className="flex-1 h-9 bg-indigo-950 hover:bg-indigo-800 active:scale-[0.98] text-white text-sm font-semibold rounded-lg transition-all duration-200 cursor-pointer"
+        >
+          Buy Now
         </button>
       </div>
     </div>
