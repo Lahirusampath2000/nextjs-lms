@@ -6,12 +6,12 @@ import Step3 from "./Step3";
 import api from "@/lib/axios";
 
 interface AddCourseFormProps{
-    teacherId:string;
+
 }
 
 const STEP_LABELS =["Details", "Media", "Confirm"] //form step labels defined here
 
-function MultiStepForm({teacherId}:AddCourseFormProps) {
+function MultiStepForm() {
   const [step, setStep] = useState(1); //form step state
    const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
@@ -55,6 +55,7 @@ function MultiStepForm({teacherId}:AddCourseFormProps) {
   //handle submit
   const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
+  
 
   setErrorMsg("");
   setSuccessMsg("");
@@ -62,8 +63,6 @@ function MultiStepForm({teacherId}:AddCourseFormProps) {
 
   try {
     const payload = new FormData();
-
-    payload.append("teacher_id", teacherId);
     payload.append("course_name", formData.course_name);
     payload.append("description", formData.description);
     payload.append("grade", formData.grade);
