@@ -127,5 +127,24 @@ const getAllCourses= async(req, res)=>{
     }
 }
 
+//get course by id
 
-module.exports={addCourse, getCourseByTutor, getAllCourses};
+const getCourseById= async(req, res)=>{
+    try{
+        const {id}=req.params;
+        const result=await pool.query(`SELECT * FROM courses WHERE id=$1`,[id]);
+        return res.status(200).json({
+            success:true,
+            course:result.rows[0]
+        });
+    }catch(err){
+        console.error(err);
+        return res.status(500).json({
+            success:false,
+            message:"Server error"
+        });
+    }
+}
+
+
+module.exports={addCourse, getCourseByTutor, getAllCourses, getCourseById};
