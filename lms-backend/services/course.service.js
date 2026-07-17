@@ -33,6 +33,8 @@ const generateUniqueCourseCode = async (courseName) => {
  
     throw new Error("Could not generate a unique course code, please try again");
 };
+
+//course add endpoint
  
 const addCourse = async (req, res) => {
     try {
