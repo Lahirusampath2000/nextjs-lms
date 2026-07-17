@@ -16,6 +16,6 @@ router.post(
 
 router.get("/courses/:teacherId", courseService.getCourseByTutor);
 router.get("/courses", courseService.getAllCourses);
-router.get("/courses/:id", courseService.getCourseById);
+router.get("/coursesDetails/:id", courseService.getCourseById);
 
 module.exports = router;
