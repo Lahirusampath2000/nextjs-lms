@@ -33,7 +33,7 @@ export default function Navbar() {
             </Link>
 
             <Link
-              href="/services"
+              href="/AllCourse"
               className="text-gray-700 hover:text-indigo-600 transition"
             >
               Courses
