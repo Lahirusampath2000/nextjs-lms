@@ -1,22 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
-
-const gradeStyleMap: Record<string, { bg: string; text: string; dot: string }> = {
-  "1":  { bg: "bg-violet-50",  text: "text-violet-700",  dot: "bg-violet-400"  },
-  "2":  { bg: "bg-indigo-50",  text: "text-indigo-700",  dot: "bg-indigo-400"  },
-  "3":  { bg: "bg-blue-50",    text: "text-blue-700",    dot: "bg-blue-400"    },
-  "4":  { bg: "bg-fuchsia-50", text: "text-fuchsia-700", dot: "bg-fuchsia-400" },
-  "5":  { bg: "bg-purple-50",  text: "text-purple-700",  dot: "bg-purple-400"  },
-  "6":  { bg: "bg-violet-50",  text: "text-violet-700",  dot: "bg-violet-400"  },
-  "7":  { bg: "bg-indigo-50",  text: "text-indigo-700",  dot: "bg-indigo-400"  },
-  "8":  { bg: "bg-blue-50",    text: "text-blue-700",    dot: "bg-blue-400"    },
-  "9":  { bg: "bg-fuchsia-50", text: "text-fuchsia-700", dot: "bg-fuchsia-400" },
-  "10": { bg: "bg-purple-50",  text: "text-purple-700",  dot: "bg-purple-400"  },
-  "11": { bg: "bg-violet-50",  text: "text-violet-700",  dot: "bg-violet-400"  },
-  "12": { bg: "bg-indigo-50",  text: "text-indigo-700",  dot: "bg-indigo-400"  },
-};
-const fallback = { bg: "bg-indigo-50", text: "text-indigo-700", dot: "bg-indigo-400" };
-const gradeStyle = (grade: string) => gradeStyleMap[grade] ?? fallback;
+import { getGradeStyle } from "./gradeStyle";
 
 export interface CourseCardProps {
   course: {
@@ -49,7 +33,7 @@ export function CourseCardSkeleton() {
 
 export default function CourseCard({ course }: CourseCardProps) {
   const router = useRouter();
-  const gs = gradeStyle(course.grade);
+  const gs = getGradeStyle(course.grade);
 
   const handleBuyNow = () => {
     router.push(`/courses/${course.id}?action=buy`);
@@ -85,7 +69,7 @@ export default function CourseCard({ course }: CourseCardProps) {
 
       <div className="px-5 pb-5 flex gap-2">
         <button
-          onClick={() => router.push(`/courses/${course.id}`)}
+          onClick={() => router.push(`/AllCourse/${course.id}`)}
           className="flex-1 h-9 bg-white hover:bg-gray-50 active:scale-[0.98] text-indigo-950 text-sm font-semibold rounded-lg border border-gray-200 hover:border-indigo-200 transition-all duration-200 cursor-pointer"
         >
           View Course
