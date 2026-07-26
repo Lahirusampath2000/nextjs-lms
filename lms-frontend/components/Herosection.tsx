@@ -1,52 +1,126 @@
-import React from 'react'
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { Playfair_Display } from "next/font/google";
+import {
+  HiOutlineBookOpen,
+  HiOutlineAcademicCap,
+  HiOutlineDocumentText,
+  HiOutlineMagnifyingGlass,
+  HiOutlineArrowRight,
+} from "react-icons/hi2";
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["700"],
+});
+
+const VALUE_CARDS = [
+  {
+    icon: HiOutlineBookOpen,
+    title: "Structured Courses",
+    desc: "Expertly organised content with clear milestones so you always know where you're headed.",
+  },
+  {
+    icon: HiOutlineDocumentText,
+    title: "Past Papers",
+    desc: "Access a full library of past exam papers organised by subject, grade, and year for targeted revision.",
+  },
+  {
+    icon: HiOutlineAcademicCap,
+    title: "Expert Tutors",
+    desc: "Learn from industry experts who are passionate about teaching and your success.",
+  },
+];
 
 function Herosection() {
   return (
-    <section className="relative min-h-screen min-w-full flex flex-col items-center justify-center text-center px-6 overflow-hidden bg-gradient-to-br from-indigo-200 via-indigo-200 to-violet-300">
-      <div className="flex flex-col lg:flex-row items-center gap-12 w-full max-w-6xl mx-auto">
+    <section className="w-full bg-white font-sans">
+      {/* Hero Banner */}
+      <div className="relative w-full overflow-hidden">
+        {/* Background Image */}
+        <div className="absolute inset-0">
+          <Image
+            src="/home/hero-img.jpg"
+            alt="Student learning online"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
+          />
 
-        {/* Left: Text */}
-        <div className="flex-1 flex flex-col items-start text-left">
-          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-indigo-950 leading-[1.08] tracking-tight max-w-xl">
-            The smarter way
-            <br />
-            <span className="bg-gradient-to-r from-violet-700 via-purple-700 to-fuchsia-700 bg-clip-text text-transparent">
-              to learn anything.
-            </span>
+          {/* Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-r from-gray-950/90 via-gray-950/75 to-indigo-950/40" />
+        </div>
+
+        {/* Hero Content */}
+        <div className="relative w-full max-w-[1440px] mx-auto px-6 lg:px-12 min-h-[88vh] flex flex-col justify-center">
+          <span className="inline-block w-fit text-xs font-semibold uppercase tracking-[0.25em] text-indigo-100 bg-white/10 border border-white/20 rounded-full px-4 py-2 mb-6 backdrop-blur-sm">
+            Learn • Grow • Succeed
+          </span>
+
+          <h1
+            className={`${playfair.className} text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white leading-[1.05] tracking-tight max-w-3xl`}
+          >
+            Learn Without Limits
           </h1>
 
-          <p className="mt-6 text-lg text-indigo-900/75 max-w-md leading-relaxed">
-            Structured courses, live lessons, and adaptive progress tracking.
+          <p className="mt-6 text-lg md:text-xl text-gray-200 max-w-xl leading-relaxed">
+            Unlock your potential with expert-led courses, comprehensive study
+            materials, and an engaging learning experience designed to help you
+            achieve academic excellence.
           </p>
 
-          <div className="flex gap-3 mt-8">
-            <Link href="/auth/authOption">
-                <button className="bg-transparent text-violet-900 border border-violet-600 mx-35 px-6 py-3 rounded-lg text-base font-medium hover:bg-violet-100/40 transition-colors cursor-pointer">
-                    Get started
-                </button>
+          {/* Search */}
+          {/* <form
+            className="mt-10 flex flex-col sm:flex-row gap-3 max-w-xl"
+            onSubmit={(e) => e.preventDefault()}
+          >
+            <div className="relative flex-1">
+              <HiOutlineMagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+
+              <input
+                type="text"
+                placeholder="What do you want to learn?"
+                className="w-full h-14 pl-12 pr-4 rounded-xl bg-white text-gray-800 placeholder:text-gray-400 outline-none shadow-lg focus:ring-2 focus:ring-indigo-400"
+              />
+            </div>
+
+            <Link
+              href="/AllCourse"
+              className="h-14 px-8 flex items-center justify-center bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl transition-all duration-300 hover:shadow-xl whitespace-nowrap"
+            >
+              Browse Courses
             </Link>
-            {/* <button className="bg-transparent text-violet-900 border border-violet-600 px-6 py-3 rounded-lg text-base font-medium hover:bg-violet-100/40 transition-colors">
-              Learn more
-            </button> */}
-          </div>
+          </form> */}
         </div>
-
-        {/*  Image placeholder */}
-         <div className="relative flex-1 min-h-[360px] lg:min-h-[460px]  overflow-hidden">
-        <Image
-            src="/home/hero-img.jpg"
-            alt="Hero Image"
-            fill
-            className="object-cover"
-        />
-        </div>
-
       </div>
-    
+
+      {/* Value Cards */}
+      <div className="w-full max-w-[1440px] mx-auto px-6 lg:px-12 py-20 md:py-24 grid grid-cols-1 md:grid-cols-3 gap-6">
+        {VALUE_CARDS.map(({ icon: Icon, title, desc }) => (
+          <div
+            key={title}
+            className="group bg-gray-50 rounded-2xl p-7 hover:bg-indigo-50 transition-all duration-300 hover:-translate-y-2 hover:shadow-xl"
+          >
+            <span className="w-12 h-12 rounded-xl bg-white shadow flex items-center justify-center mb-5">
+              <Icon className="w-6 h-6 text-indigo-600" />
+            </span>
+
+            <h3 className="text-lg font-bold text-gray-900 mb-3">{title}</h3>
+
+            <p className="text-gray-600 leading-relaxed mb-6">{desc}</p>
+
+            <span className="inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 group-hover:gap-3 transition-all">
+              Explore Now
+              <HiOutlineArrowRight className="w-4 h-4" />
+            </span>
+          </div>
+        ))}
+      </div>
     </section>
-  )
+  );
 }
 
-export default Herosection
+export default Herosection;
