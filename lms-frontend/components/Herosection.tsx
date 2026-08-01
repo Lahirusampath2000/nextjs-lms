@@ -2,19 +2,13 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Playfair_Display } from "next/font/google";
 import {
   HiOutlineBookOpen,
   HiOutlineAcademicCap,
   HiOutlineDocumentText,
-  HiOutlineMagnifyingGlass,
   HiOutlineArrowRight,
 } from "react-icons/hi2";
-
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  weight: ["700"],
-});
+import { INK, PAPER, RULE, MUTE, BODY, SIGNAL, THUMB_BG, CARD_HOVER_SHADOW } from "@/lib/theme";
 
 const VALUE_CARDS = [
   {
@@ -25,7 +19,7 @@ const VALUE_CARDS = [
   {
     icon: HiOutlineDocumentText,
     title: "Past Papers",
-    desc: "Access a full library of past exam papers organised by subject, grade, and year for targeted revision.",
+    desc: "A full library of past exam papers organised by subject, grade, and year for targeted revision.",
   },
   {
     icon: HiOutlineAcademicCap,
@@ -34,12 +28,11 @@ const VALUE_CARDS = [
   },
 ];
 
-function Herosection() {
+export default function Herosection() {
   return (
-    <section className="w-full bg-white font-sans">
-      {/* Hero Banner */}
+    <section className="w-full font-sans" style={{ background: PAPER }}>
+      {/* Hero banner */}
       <div className="relative w-full overflow-hidden">
-        {/* Background Image */}
         <div className="absolute inset-0">
           <Image
             src="/home/hero-img.jpg"
@@ -49,70 +42,74 @@ function Herosection() {
             sizes="100vw"
             className="object-cover"
           />
-
-          {/* Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-r from-gray-950/90 via-gray-950/75 to-indigo-950/40" />
+          {/* Ink wash, on-brand instead of a generic gray/indigo mix */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#14213D]/90 via-[#14213D]/72 to-[#14213D]/35" />
         </div>
 
-        {/* Hero Content */}
-        <div className="relative w-full max-w-[1440px] mx-auto px-6 lg:px-12 min-h-[88vh] flex flex-col justify-center">
-          <span className="inline-block w-fit text-xs font-semibold uppercase tracking-[0.25em] text-indigo-100 bg-white/10 border border-white/20 rounded-full px-4 py-2 mb-6 backdrop-blur-sm">
-            Learn • Grow • Succeed
-          </span>
-
-          <h1
-            className={`${playfair.className} text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white leading-[1.05] tracking-tight max-w-3xl`}
+        <div className="relative w-full max-w-7xl mx-auto px-6 lg:px-12 min-h-[80vh] flex flex-col justify-center">
+          <p
+            className="font-data text-[11px] font-medium uppercase tracking-[0.25em] mb-5"
+            style={{ color: "#8FD4B0" }}
           >
+            Learn · Grow · Succeed
+          </p>
+
+          <h1 className="font-display text-5xl sm:text-6xl md:text-7xl font-bold text-white leading-[1.05] tracking-tight max-w-3xl">
             Learn Without Limits
           </h1>
 
-          <p className="mt-6 text-lg md:text-xl text-gray-200 max-w-xl leading-relaxed">
+          <p className="mt-6 text-lg text-white/75 max-w-xl leading-relaxed">
             Unlock your potential with expert-led courses, comprehensive study
-            materials, and an engaging learning experience designed to help you
-            achieve academic excellence.
+            materials, and a learning experience built around real classrooms
+            — not a features checklist.
           </p>
 
-          {/* Search */}
-          {/* <form
-            className="mt-10 flex flex-col sm:flex-row gap-3 max-w-xl"
-            onSubmit={(e) => e.preventDefault()}
-          >
-            <div className="relative flex-1">
-              <HiOutlineMagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-
-              <input
-                type="text"
-                placeholder="What do you want to learn?"
-                className="w-full h-14 pl-12 pr-4 rounded-xl bg-white text-gray-800 placeholder:text-gray-400 outline-none shadow-lg focus:ring-2 focus:ring-indigo-400"
-              />
-            </div>
-
+          <div className="mt-10 flex items-center gap-4">
             <Link
               href="/AllCourse"
-              className="h-14 px-8 flex items-center justify-center bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl transition-all duration-300 hover:shadow-xl whitespace-nowrap"
+              className="h-12 px-7 inline-flex items-center gap-2 text-sm font-semibold rounded-xl transition-all duration-200 active:scale-[0.98] hover:brightness-110"
+              style={{ background: PAPER, color: INK }}
             >
               Browse Courses
+              <HiOutlineArrowRight className="w-4 h-4" />
             </Link>
-          </form> */}
+            <Link
+              href="/auth/authOption"
+              className="h-12 px-6 inline-flex items-center text-sm font-semibold rounded-xl border border-white/25 text-white transition-colors hover:bg-white/10"
+            >
+              Get started free
+            </Link>
+          </div>
         </div>
       </div>
 
-      {/* Value Cards */}
-      <div className="w-full max-w-[1440px] mx-auto px-6 lg:px-12 py-20 md:py-24 grid grid-cols-1 md:grid-cols-3 gap-6">
+      {/* Value cards */}
+      <div className="w-full max-w-7xl mx-auto px-6 lg:px-12 py-16 md:py-20 grid grid-cols-1 md:grid-cols-3 gap-6">
         {VALUE_CARDS.map(({ icon: Icon, title, desc }) => (
           <div
             key={title}
-            className="group bg-gray-50 rounded-2xl p-7 hover:bg-indigo-50 transition-all duration-300 hover:-translate-y-2 hover:shadow-xl"
+            className={`group rounded-[22px] border p-7 transition-all duration-300 hover:-translate-y-1 hover:shadow-[${CARD_HOVER_SHADOW}]`}
+            style={{ borderColor: RULE, background: "#FFFFFF" }}
           >
-            <span className="w-12 h-12 rounded-xl bg-white shadow flex items-center justify-center mb-5">
-              <Icon className="w-6 h-6 text-indigo-600" />
+            <span
+              className="w-12 h-12 rounded-xl flex items-center justify-center mb-5 transition-colors"
+              style={{ background: THUMB_BG }}
+            >
+              <Icon className="w-6 h-6" style={{ color: INK }} />
             </span>
 
-            <h3 className="text-lg font-bold text-gray-900 mb-3">{title}</h3>
+            <h3 className="font-display text-lg font-bold mb-2.5" style={{ color: INK }}>
+              {title}
+            </h3>
 
-            <p className="text-gray-600 leading-relaxed mb-6">{desc}</p>
+            <p className="text-sm leading-relaxed mb-6" style={{ color: BODY }}>
+              {desc}
+            </p>
 
-            <span className="inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 group-hover:gap-3 transition-all">
+            <span
+              className="inline-flex items-center gap-2 text-sm font-semibold group-hover:gap-3 transition-all"
+              style={{ color: SIGNAL }}
+            >
               Explore Now
               <HiOutlineArrowRight className="w-4 h-4" />
             </span>
@@ -122,5 +119,3 @@ function Herosection() {
     </section>
   );
 }
-
-export default Herosection;
