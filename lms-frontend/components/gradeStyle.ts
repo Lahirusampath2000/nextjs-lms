@@ -5,27 +5,43 @@ export interface GradeStyle {
   border: string;
 }
 
-const gradeStyleMap: Record<string, GradeStyle> = {
-  "1":  { bg: "bg-violet-50",  text: "text-violet-700",  dot: "bg-violet-400",  border: "border-violet-100"  },
-  "2":  { bg: "bg-indigo-50",  text: "text-indigo-700",  dot: "bg-indigo-400",  border: "border-indigo-100"  },
-  "3":  { bg: "bg-blue-50",    text: "text-blue-700",    dot: "bg-blue-400",    border: "border-blue-100"    },
-  "4":  { bg: "bg-fuchsia-50", text: "text-fuchsia-700", dot: "bg-fuchsia-400", border: "border-fuchsia-100" },
-  "5":  { bg: "bg-purple-50",  text: "text-purple-700",  dot: "bg-purple-400",  border: "border-purple-100"  },
-  "6":  { bg: "bg-violet-50",  text: "text-violet-700",  dot: "bg-violet-400",  border: "border-violet-100"  },
-  "7":  { bg: "bg-indigo-50",  text: "text-indigo-700",  dot: "bg-indigo-400",  border: "border-indigo-100"  },
-  "8":  { bg: "bg-blue-50",    text: "text-blue-700",    dot: "bg-blue-400",    border: "border-blue-100"    },
-  "9":  { bg: "bg-fuchsia-50", text: "text-fuchsia-700", dot: "bg-fuchsia-400", border: "border-fuchsia-100" },
-  "10": { bg: "bg-purple-50",  text: "text-purple-700",  dot: "bg-purple-400",  border: "border-purple-100"  },
-  "11": { bg: "bg-violet-50",  text: "text-violet-700",  dot: "bg-violet-400",  border: "border-violet-100"  },
-  "12": { bg: "bg-indigo-50",  text: "text-indigo-700",  dot: "bg-indigo-400",  border: "border-indigo-100"  },
-};
+export interface GradeStamp {
+  bg: string;
+  text: string;
+}
 
-const fallbackGrade: GradeStyle = {
-  bg: "bg-indigo-50",
-  text: "text-indigo-700",
-  dot: "bg-indigo-400",
-  border: "border-indigo-100",
-};
+// Single source of truth for the four-accent theme — signal green /
+// sunbeam / coral / ink — used for every grade indicator in the app:
+// the circular stamp on CourseCard and the course detail hero, and the
+// pill chip in list/meta rows. Keep the order below stable so a given
+// grade always resolves to the same color everywhere.
+const STAMP_PALETTE: GradeStamp[] = [
+  { bg: "#2F6B4F", text: "#FBFAF7" }, // Signal green
+  { bg: "#F0B429", text: "#14213D" }, // Sunbeam
+  { bg: "#E8604C", text: "#FBFAF7" }, // Coral
+  { bg: "#14213D", text: "#FBFAF7" }, // Ink
+];
+
+const PILL_PALETTE: GradeStyle[] = [
+  { bg: "bg-[#EAF2ED]", text: "text-[#2F6B4F]", dot: "bg-[#2F6B4F]", border: "border-[#CFE0D5]" }, // Signal green
+  { bg: "bg-[#FDF3DC]", text: "text-[#92650E]", dot: "bg-[#F0B429]", border: "border-[#F5DFA0]" }, // Sunbeam
+  { bg: "bg-[#FCEAE7]", text: "text-[#C24632]", dot: "bg-[#E8604C]", border: "border-[#F4C6BC]" }, // Coral
+  { bg: "bg-[#EEF0F4]", text: "text-[#14213D]", dot: "bg-[#14213D]", border: "border-[#D7DBE4]" }, // Ink
+];
+
+/** Deterministic index shared by both palettes so a grade never drifts between them. */
+function gradeIndex(grade: string): number {
+  const n = parseInt(grade, 10);
+  if (Number.isFinite(n)) {
+    return ((n % STAMP_PALETTE.length) + STAMP_PALETTE.length) % STAMP_PALETTE.length;
+  }
+  // Non-numeric grade labels still get a stable, deterministic color.
+  const code = grade.charCodeAt(0) || 0;
+  return code % STAMP_PALETTE.length;
+}
 
 export const getGradeStyle = (grade: string): GradeStyle =>
-  gradeStyleMap[grade] ?? fallbackGrade;
+  PILL_PALETTE[gradeIndex(grade)] ?? PILL_PALETTE[3];
+
+export const getGradeStamp = (grade: string): GradeStamp =>
+  STAMP_PALETTE[gradeIndex(grade)] ?? STAMP_PALETTE[3];
