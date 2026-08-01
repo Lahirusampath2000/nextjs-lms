@@ -1,67 +1,114 @@
-'use client'
-import React, { useEffect, useState } from 'react'
-import api from '../lib/axios'
-import Image from 'next/image'
+"use client";
+
+import React, { useEffect, useState } from "react";
+import Image from "next/image";
+import api from "@/lib/axios";
+import SectionHeading from "@/components/SectionHeading";
+import { INK, PAPER, RULE, MUTE, THUMB_BG, CARD_HOVER_SHADOW } from "@/lib/theme";
 
 interface Teacher {
-  id: number
-  name: string
-  subject?: string
-  avatar?: string
+  id: number;
+  name: string;
+  subject?: string;
+  avatar?: string;
 }
 
-function Teachers() {
-  const [teachers, setTeachers] = useState<Teacher[]>([])
+function getInitials(name: string) {
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((n) => n[0]?.toUpperCase() ?? "")
+    .join("");
+}
 
-  const getTeachers = async () => {
-    try {
-      const res = await api.get(`${process.env.NEXT_PUBLIC_API_URL}/api/teachers`)
-      setTeachers(res.data.teachers)
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  useEffect(() => {
-    getTeachers()
-  }, [])
-
-  const getInitials = (name: string) =>
-    name.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase()
-
+function TeacherCardSkeleton() {
   return (
-   <div className="w-full px-6 py-6 bg-gray-50">
-    <div className="max-w-6xl mx-auto">
-      <div className="mb-6">
-        <h1 className="text-4xl font-bold text-gray-900 tracking-tight">Tutors</h1>
-      </div>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-        {teachers.map((teacher) => (
-          <div
-            key={teacher.id}
-            className="flex flex-col items-center gap-4 p-6 bg-white rounded-2xl border border-gray-100 shadow-sm text-center"
-          >
-            {teacher.avatar ? (
-              <div className="relative w-28 h-28 rounded-full overflow-hidden border-2 border-indigo-100">
-                <Image src={teacher.avatar} alt={teacher.name} fill className="object-cover" />
-              </div>
-            ) : (
-              <div className="w-28 h-28 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-medium text-2xl">
-                {getInitials(teacher.name)}
-              </div>
-            )}
-            <div>
-              <p className="text-base font-semibold text-gray-900">{teacher.name}</p>
-              {teacher.subject && (
-                <p className="text-sm text-gray-500 mt-1">{teacher.subject}</p>
-              )}
-            </div>
-          </div>
-        ))}
+    <div className="rounded-[22px] border overflow-hidden animate-pulse" style={{ borderColor: RULE }}>
+      <div className="h-40" style={{ background: THUMB_BG }} />
+      <div className="p-4 flex flex-col gap-2">
+        <div className="h-3.5 w-2/3 rounded-full" style={{ background: "#EDEAE1" }} />
+        <div className="h-3 w-1/2 rounded-full" style={{ background: "#EDEAE1" }} />
       </div>
     </div>
-  </div>
-  )
+  );
 }
 
-export default Teachers
+function TeacherCard({ teacher }: { teacher: Teacher }) {
+  return (
+    <div
+      className={`group rounded-[22px] border overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-[${CARD_HOVER_SHADOW}]`}
+      style={{ borderColor: RULE, background: "#FFFFFF" }}
+    >
+      <div className="relative h-40" style={{ background: THUMB_BG }}>
+        {teacher.avatar ? (
+          <Image
+            src={teacher.avatar}
+            alt={teacher.name}
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <span className="font-display text-2xl font-bold" style={{ color: INK }}>
+              {getInitials(teacher.name)}
+            </span>
+          </div>
+        )}
+      </div>
+      <div className="p-4">
+        <p className="font-display text-sm font-bold" style={{ color: INK }}>
+          {teacher.name}
+        </p>
+        <p className="font-data text-[10px] uppercase tracking-widest mt-1" style={{ color: MUTE }}>
+          {teacher.subject || "Instructor"}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+export default function Teachers() {
+  const [teachers, setTeachers] = useState<Teacher[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    api
+      .get(`${process.env.NEXT_PUBLIC_API_URL}/api/teachers`)
+      .then((res) => setTeachers(res.data.teachers || []))
+      .catch((err) => console.error("Failed to load teachers:", err))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const featured = teachers.slice(0, 4);
+
+  return (
+    <section className="py-16 md:py-20 px-6 lg:px-12" style={{ background: PAPER }}>
+      <div className="w-full max-w-7xl mx-auto">
+        <SectionHeading
+          eyebrow="Our team"
+          title="Meet our expert tutors"
+          action={{ label: "View all tutors", href: "#" }}
+        />
+
+        {loading ? (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <TeacherCardSkeleton key={i} />
+            ))}
+          </div>
+        ) : featured.length === 0 ? (
+          <p className="text-sm py-10 text-center" style={{ color: MUTE }}>
+            No tutors to show yet.
+          </p>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+            {featured.map((t) => (
+              <TeacherCard key={t.id} teacher={t} />
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
