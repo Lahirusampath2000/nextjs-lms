@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -20,13 +20,33 @@ const NAV_LINKS = [
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const [showNavbar, setShowNavbar] = useState(true);
   const pathname = usePathname();
 
   const isHome = pathname === "/";
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        setShowNavbar(false);
+        setOpen(false);
+      } else {
+        setShowNavbar(true);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
     <header
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 w-full z-50 transition-transform duration-300 ${
+        showNavbar ? "translate-y-0" : "-translate-y-full"
+      } ${
         isHome
           ? "bg-transparent border-transparent"
           : "bg-white/95 backdrop-blur-sm border-b border-gray-100"
@@ -42,11 +62,7 @@ export default function Navbar() {
                 isHome ? "bg-white/20" : "bg-indigo-950"
               }`}
             >
-              <HiOutlineAcademicCap
-                className={`w-4 h-4 ${
-                  isHome ? "text-white" : "text-white"
-                }`}
-              />
+              <HiOutlineAcademicCap className="w-4 h-4 text-white" />
             </span>
 
             <span
@@ -57,7 +73,6 @@ export default function Navbar() {
               EduLearn
             </span>
           </Link>
-
 
           {/* Desktop links */}
           <div className="hidden lg:flex items-center gap-1">
@@ -75,7 +90,6 @@ export default function Navbar() {
               </Link>
             ))}
           </div>
-
 
           {/* Search */}
           <div className="hidden md:flex items-center flex-1 max-w-xs">
@@ -97,7 +111,6 @@ export default function Navbar() {
               />
             </div>
           </div>
-
 
           {/* Auth */}
           <div className="hidden md:flex items-center gap-2 flex-shrink-0">
@@ -123,7 +136,6 @@ export default function Navbar() {
               Register
             </Link>
           </div>
-
 
           {/* Mobile */}
           <button
