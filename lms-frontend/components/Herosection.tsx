@@ -81,6 +81,12 @@ export default function Herosection() {
             </Link>
           </div>
         </div>
+
+        {/* Bottom fade — blends the hero into the page background instead of cutting hard */}
+        <div
+          className="absolute bottom-0 left-0 right-0 h-28 md:h-40 pointer-events-none"
+          style={{ background: `linear-gradient(to bottom, transparent, ${PAPER})` }}
+        />
       </div>
 
       {/* Value cards */}
@@ -88,7 +94,7 @@ export default function Herosection() {
         {VALUE_CARDS.map(({ icon: Icon, title, desc }) => (
           <div
             key={title}
-            className={`group rounded-[22px] border p-7 transition-all duration-300 hover:-translate-y-1 hover:shadow-[${CARD_HOVER_SHADOW}]`}
+            className={`group flex flex-col rounded-[22px] border p-7 transition-all duration-300 hover:-translate-y-1 hover:shadow-[${CARD_HOVER_SHADOW}]`}
             style={{ borderColor: RULE, background: "#FFFFFF" }}
           >
             <span
@@ -102,7 +108,8 @@ export default function Herosection() {
               {title}
             </h3>
 
-            <p className="text-sm leading-relaxed mb-6" style={{ color: BODY }}>
+            {/* flex-1 absorbs the leftover space so "Explore Now" lands on the same line in every card */}
+            <p className="text-sm leading-relaxed mb-6 flex-1" style={{ color: BODY }}>
               {desc}
             </p>
 
