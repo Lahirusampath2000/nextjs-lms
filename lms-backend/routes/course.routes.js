@@ -14,7 +14,8 @@ router.post(
     courseService.addCourse
 );
 
-router.get("/courses/:teacherId", courseService.getCourseByTutor);
+router.get("/courses/:teacherId", verifyToken, courseService.getCourseByTutor);
+
 router.get("/courses", courseService.getAllCourses);
 router.get("/coursesDetails/:id", courseService.getCourseById);
 

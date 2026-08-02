@@ -95,58 +95,75 @@ const addCourse = async (req, res) => {
 }
 
 //get course by teacher
-const getCourseByTutor= async(req,res)=>{
-    try{
-       const {teacher_id}=req.params;
-       const result=await pool.query(`SELECT * FROM courses WHERE teacher_id=$1`,[teacher_id]);
+const getCourseByTutor = async (req, res) => {
+    try {
+        const { teacherId } = req.params; // matches :teacherId in the route
+        const result = await pool.query(
+            `SELECT c.*
+             FROM courses c
+             JOIN teachers t ON t.id = c.teacher_id
+             WHERE t.user_id = $1`,
+            [teacherId]
+        );
         return res.status(200).json({
-            success:true,
-            courses:result.rows
+            success: true,
+            courses: result.rows
         });
-    }catch(err){
+    } catch (err) {
         console.error(err);
         return res.status(500).json({
-            success:false,
-            message:"Server error"
+            success: false,
+            message: "Server error"
         });
     }
 }
 
-//get all courses
-const getAllCourses= async(req, res)=>{
-    try{
-        const result=await pool.query(`SELECT * FROM courses`);
+
+const getAllCourses = async (req, res) => {
+    try {
+        const result = await pool.query(`
+            SELECT c.*, u.name AS teacher_name
+            FROM courses c
+            JOIN teachers t ON t.id = c.teacher_id
+            JOIN users u ON u.id = t.user_id
+        `);
         return res.status(200).json({
-            success:true,
-            courses:result.rows
+            success: true,
+            courses: result.rows
         });
-    }catch(err){
+    } catch (err) {
         console.error(err);
         return res.status(500).json({
-            success:false,
-            message:"Server error"
+            success: false,
+            message: "Server error"
         });
     }
 }
 
 //get course by id
-
-const getCourseById= async(req, res)=>{
-    try{
-        const {id}=req.params;
-        const result=await pool.query(`SELECT * FROM courses WHERE id=$1`,[id]);
+const getCourseById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const result = await pool.query(
+            `SELECT c.*, u.name AS teacher_name
+             FROM courses c
+             JOIN teachers t ON t.id = c.teacher_id
+             JOIN users u ON u.id = t.user_id
+             WHERE c.id = $1`,
+            [id]
+        );
         return res.status(200).json({
-            success:true,
-            course:result.rows[0]
+            success: true,
+            course: result.rows[0]
         });
-    }catch(err){
+    } catch (err) {
         console.error(err);
         return res.status(500).json({
-            success:false,
-            message:"Server error"
+            success: false,
+            message: "Server error"
         });
     }
 }
 
 
-module.exports={addCourse, getCourseByTutor, getAllCourses, getCourseById};
+module.exports = { addCourse, getCourseByTutor, getAllCourses, getCourseById };
