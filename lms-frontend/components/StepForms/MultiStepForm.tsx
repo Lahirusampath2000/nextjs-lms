@@ -5,30 +5,85 @@ import Step2 from "./Step2";
 import Step3 from "./Step3";
 import api from "@/lib/axios";
 
-interface AddCourseFormProps{
+const STEP_LABELS = ["Details", "Media", "Confirm"];
 
+// ---- Design tokens — match CourseCard.tsx / AllCourse.tsx / course detail page ----
+const INK = "#14213D";
+const PAPER = "#FBFAF7";
+const RULE = "#E7E4DC";
+const MUTE = "#9A968A";
+const BODY = "#6B675C";
+const SIGNAL = "#2F6B4F";
+const ERROR_BG = "#FBEDE9";
+const ERROR_BORDER = "#F0D5CC";
+const ERROR_TEXT = "#B4432F";
+const SUCCESS_BG = "#EAF2ED";
+const SUCCESS_BORDER = "#CFE0D5";
+
+/** Step tracker built from the same "stamp" motif as the course grade badge,
+ *  so the form reads as part of the same product as the catalogue. */
+function StepStamp({
+  number,
+  label,
+  state,
+}: {
+  number: number;
+  label: string;
+  state: "done" | "current" | "upcoming";
+}) {
+  const look =
+    state === "done"
+      ? { bg: SIGNAL, border: SIGNAL, text: PAPER }
+      : state === "current"
+      ? { bg: "#FFFFFF", border: INK, text: INK }
+      : { bg: "#F1EEE5", border: "#F1EEE5", text: MUTE };
+
+  return (
+    <div className="flex flex-col items-center gap-1.5">
+      <div
+        className="relative w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300"
+        style={{ background: look.bg, border: `2px solid ${look.border}` }}
+      >
+        {state === "done" && (
+          <div className="absolute inset-[3px] rounded-full border border-dashed" style={{ borderColor: `${look.text}55` }} />
+        )}
+        {state === "done" ? (
+          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 16 16">
+            <path d="M3 8l3.5 3.5L13 5" stroke={look.text} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        ) : (
+          <span className="font-data text-xs font-semibold" style={{ color: look.text }}>
+            {number}
+          </span>
+        )}
+      </div>
+      <span
+        className="font-data text-[10px] font-medium uppercase tracking-widest"
+        style={{ color: state === "upcoming" ? MUTE : INK }}
+      >
+        {label}
+      </span>
+    </div>
+  );
 }
 
-const STEP_LABELS =["Details", "Media", "Confirm"] //form step labels defined here
-
 function MultiStepForm() {
-  const [step, setStep] = useState(1); //form step state
-   const [submitting, setSubmitting] = useState(false);
+  const [step, setStep] = useState(1); // form step state
+  const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
- 
+
   const [formData, setFormData] = useState({
     course_name: "",
     description: "",
     grade: "",
   });
- 
+
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
 
-  
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>  //handle form input change
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement> // handle form input change
   ) => {
     setFormData({
       ...formData,
@@ -36,166 +91,135 @@ function MultiStepForm() {
     });
   };
 
-  const isStepValid= formData.course_name.trim() !=="" && formData.grade.trim() !==""; //validate step1 form 
+  const isStepValid = formData.course_name.trim() !== "" && formData.grade.trim() !== ""; // validate step1 form
 
-  const nextStep = ()=>{
-    if(step === 1 && !isStepValid){
-        setErrorMsg("course name and grade required")  //throw error if name and grade empty
-        return;
+  const nextStep = () => {
+    if (step === 1 && !isStepValid) {
+      setErrorMsg("Course name and grade are required."); // throw error if name and grade empty
+      return;
     }
-    setErrorMsg("")
-    if(step<3) setStep(step+1)  //if success go to next step
-  }
+    setErrorMsg("");
+    if (step < 3) setStep(step + 1); // if success go to next step
+  };
 
-  const prevStep=()=>{
-    setErrorMsg("")
-    if(step>1)  setStep(step-1)  //redirect previous step if not error
-  }
+  const prevStep = () => {
+    setErrorMsg("");
+    if (step > 1) setStep(step - 1); // redirect previous step if not error
+  };
 
-  //handle submit
+  // handle submit
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  
+    e.preventDefault();
 
-  setErrorMsg("");
-  setSuccessMsg("");
-  setSubmitting(true);
+    setErrorMsg("");
+    setSuccessMsg("");
+    setSubmitting(true);
 
-  try {
-    const payload = new FormData();
-    payload.append("course_name", formData.course_name);
-    payload.append("description", formData.description);
-    payload.append("grade", formData.grade);
+    try {
+      const payload = new FormData();
+      payload.append("course_name", formData.course_name);
+      payload.append("description", formData.description);
+      payload.append("grade", formData.grade);
 
-    if (videoFile) {
-      payload.append("video", videoFile);
-    }
+      if (videoFile) {
+        payload.append("video", videoFile);
+      }
 
-    if (thumbnailFile) {
-      payload.append("thumbnail", thumbnailFile);
-    }
+      if (thumbnailFile) {
+        payload.append("thumbnail", thumbnailFile);
+      }
 
-    const res = await api.post(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/courses`,
-      payload,
-      {
+      const res = await api.post(`${process.env.NEXT_PUBLIC_API_URL}/api/courses`, payload, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-      }
-    );
+      });
 
-    setSuccessMsg(
-      `Course created successfully. Course code: ${res.data.course?.course_code}`
-    );
+      setSuccessMsg(`Course published. Course code: ${res.data.course?.course_code}`);
 
-    setFormData({
-      course_name: "",
-      description: "",
-      grade: "",
-    });
+      setFormData({
+        course_name: "",
+        description: "",
+        grade: "",
+      });
 
-    setVideoFile(null);
-    setThumbnailFile(null);
-    setStep(1);
+      setVideoFile(null);
+      setThumbnailFile(null);
+      setStep(1);
+    } catch (error: any) {
+      setErrorMsg(error.response?.data?.message || "Failed to create course. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
-  } catch (error: any) {
-    setErrorMsg(
-      error.response?.data?.message || "Failed to create course"
-    );
-  } finally {
-    setSubmitting(false);
-  }
-};
+  return (
+    <div className="min-h-screen flex items-center justify-center font-sans px-4 py-12" style={{ background: PAPER }}>
+      {/* Self-contained font import — matches AllCourse.tsx / course detail page. */}
+      <style jsx global>{`
+        @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap");
+        .font-display {
+          font-family: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+        }
+        .font-data {
+          font-family: "IBM Plex Mono", ui-monospace, monospace;
+        }
+      `}</style>
 
-return (
-    <div className="min-h-screen flex items-center justify-center font-sans relative overflow-hidden bg-gradient-to-br from-indigo-50 via-indigo-100 to-violet-100 px-4 py-12">
-      {/* ── decorative bubbles ── */}
-      <div className="absolute -top-16 -left-16 w-64 h-64 rounded-full bg-indigo-200/40 pointer-events-none" />
-      <div className="absolute bottom-8 right-8 w-56 h-56 rounded-full bg-fuchsia-200/30 pointer-events-none" />
-      <div className="absolute top-1/3 right-0 w-40 h-40 rounded-full bg-violet-200/30 pointer-events-none" />
- 
-      <div className="relative z-10 w-full max-w-md bg-white/90 backdrop-blur-sm rounded-2xl shadow-md p-8 border border-white/60">
-        {/* ── header ── */}
-        <h2 className="text-2xl font-bold text-indigo-950 tracking-tight mb-1">
-          Add a New Course
+      <div
+        className="relative z-10 w-full max-w-lg rounded-[22px] border p-8 md:p-9"
+        style={{ borderColor: RULE, background: "#FFFFFF", boxShadow: "0 28px 54px -30px rgba(20,33,61,0.25)" }}
+      >
+        <p className="font-data text-[11px] font-medium uppercase tracking-[0.22em]" style={{ color: SIGNAL }}>
+          Teacher tools
+        </p>
+        <h2 className="font-display text-2xl font-semibold tracking-tight mt-1.5" style={{ color: INK }}>
+          Add a new course
         </h2>
-        <p className="text-sm text-gray-500 mb-6">
-          {step === 1 && "Tell us about your course."}
-          {step === 2 && "Upload a video and thumbnail."}
+        <p className="text-sm mt-1.5 mb-7" style={{ color: BODY }}>
+          {step === 1 && "Tell students what they'll learn."}
+          {step === 2 && "Add a video and a thumbnail — both optional."}
           {step === 3 && "Review everything before you publish."}
         </p>
- 
-        {/* ── step progress ── */}
-        <div className="flex items-center mb-7">
+
+        {/* Step progress */}
+        <div className="flex items-center mb-8">
           {STEP_LABELS.map((label, idx) => {
             const stepNum = idx + 1;
-            const isComplete = step > stepNum;
-            const isCurrent = step === stepNum;
- 
+            const state = step > stepNum ? "done" : step === stepNum ? "current" : "upcoming";
             return (
               <React.Fragment key={label}>
-                <div className="flex flex-col items-center gap-1.5">
-                  <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold transition-all duration-300 ${
-                      isComplete
-                        ? "bg-indigo-950 text-white"
-                        : isCurrent
-                        ? "bg-white text-indigo-950 border-2 border-indigo-950"
-                        : "bg-indigo-100 text-indigo-300"
-                    }`}
-                  >
-                    {isComplete ? (
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2.5}
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                    ) : (
-                      stepNum
-                    )}
-                  </div>
-                  <span
-                    className={`text-[11px] font-medium ${
-                      isCurrent ? "text-indigo-950" : "text-gray-400"
-                    }`}
-                  >
-                    {label}
-                  </span>
-                </div>
+                <StepStamp number={stepNum} label={label} state={state} />
                 {stepNum < STEP_LABELS.length && (
                   <div
-                    className={`flex-1 h-0.5 mx-2 mb-4 rounded-full transition-all duration-300 ${
-                      step > stepNum ? "bg-indigo-950" : "bg-indigo-100"
-                    }`}
+                    className="flex-1 h-px mx-2 mb-5 transition-colors duration-300"
+                    style={{ background: step > stepNum ? SIGNAL : RULE }}
                   />
                 )}
               </React.Fragment>
             );
           })}
         </div>
- 
+
         {errorMsg && (
-          <p className="text-sm text-red-600 mb-4 bg-red-50 border border-red-100 rounded-lg p-2.5">
+          <p
+            className="text-sm mb-5 rounded-xl p-3"
+            style={{ color: ERROR_TEXT, background: ERROR_BG, border: `1px solid ${ERROR_BORDER}` }}
+          >
             {errorMsg}
           </p>
         )}
         {successMsg && (
-          <p className="text-sm text-emerald-700 mb-4 bg-emerald-50 border border-emerald-100 rounded-lg p-2.5">
+          <p
+            className="text-sm mb-5 rounded-xl p-3"
+            style={{ color: SIGNAL, background: SUCCESS_BG, border: `1px solid ${SUCCESS_BORDER}` }}
+          >
             {successMsg}
           </p>
         )}
- 
+
         {step === 1 && <Step1 formData={formData} handleChange={handleChange} />}
- 
+
         {step === 2 && (
           <Step2
             videoFile={videoFile}
@@ -204,33 +228,29 @@ return (
             setThumbnailFile={setThumbnailFile}
           />
         )}
- 
-        {step === 3 && (
-          <Step3
-            formData={formData}
-            videoFile={videoFile}
-            thumbnailFile={thumbnailFile}
-          />
-        )}
- 
-        {/* ── navigation ── */}
-        <div className="flex justify-between mt-7">
+
+        {step === 3 && <Step3 formData={formData} videoFile={videoFile} thumbnailFile={thumbnailFile} />}
+
+        {/* Navigation */}
+        <div className="flex justify-between mt-8">
           {step > 1 ? (
             <button
               onClick={prevStep}
               disabled={submitting}
-              className="py-2 px-4 rounded-md text-indigo-950 font-medium border border-indigo-200 hover:bg-indigo-50 transition-colors duration-300 disabled:opacity-50 cursor-pointer"
+              className="h-11 px-5 rounded-xl text-sm font-semibold border transition-all duration-200 disabled:opacity-50 cursor-pointer active:scale-[0.98]"
+              style={{ background: "#FFFFFF", color: INK, borderColor: RULE }}
             >
               Previous
             </button>
           ) : (
             <span />
           )}
- 
+
           {step < 3 ? (
             <button
               onClick={nextStep}
-              className="bg-indigo-950 text-white py-2 px-5 rounded-md hover:bg-indigo-800 transition-colors duration-300 cursor-pointer"
+              className="h-11 px-6 rounded-xl text-sm font-semibold transition-all duration-200 cursor-pointer active:scale-[0.98] hover:brightness-110"
+              style={{ background: INK, color: PAPER }}
             >
               Next
             </button>
@@ -238,17 +258,16 @@ return (
             <button
               onClick={handleSubmit}
               disabled={submitting}
-              className="bg-indigo-950 text-white py-2 px-5 rounded-md hover:bg-indigo-800 transition-colors duration-300 disabled:opacity-50 cursor-pointer"
+              className="h-11 px-6 rounded-xl text-sm font-semibold transition-all duration-200 disabled:opacity-50 cursor-pointer active:scale-[0.98] hover:brightness-110"
+              style={{ background: INK, color: PAPER }}
             >
-              {submitting ? "Submitting..." : "Submit"}
+              {submitting ? "Publishing…" : "Publish course"}
             </button>
           )}
         </div>
       </div>
     </div>
   );
-
-
 }
 
-export default MultiStepForm
+export default MultiStepForm;

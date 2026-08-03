@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { HiOutlineCloudArrowUp, HiOutlineFilm, HiOutlineXMark } from "react-icons/hi2";
 
 interface Step2Props {
   videoFile: File | null;
@@ -7,115 +8,166 @@ interface Step2Props {
   setThumbnailFile: (file: File | null) => void;
 }
 
-function Step2({
-  videoFile,
-  thumbnailFile,
-  setVideoFile,
-  setThumbnailFile,
-}: Step2Props) {
+// ---- Design tokens — match CourseCard.tsx / AllCourse.tsx / course detail page ----
+const INK = "#14213D";
+const RULE = "#E7E4DC";
+const MUTE = "#9A968A";
+const SIGNAL = "#2F6B4F";
+const THUMB_BG = "#F1EEE5";
+
+function useObjectUrl(file: File | null) {
+  const [url, setUrl] = useState<string | null>(null);
+  useEffect(() => {
+    if (!file) {
+      setUrl(null);
+      return;
+    }
+    const next = URL.createObjectURL(file);
+    setUrl(next);
+    return () => URL.revokeObjectURL(next);
+  }, [file]);
+  return url;
+}
+
+function formatSize(bytes: number) {
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function Step2({ videoFile, thumbnailFile, setVideoFile, setThumbnailFile }: Step2Props) {
+  const thumbnailUrl = useObjectUrl(thumbnailFile);
+
   const handleVideoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] ?? null;
-    setVideoFile(file);
+    setVideoFile(e.target.files?.[0] ?? null);
+    e.target.value = "";
   };
 
   const handleThumbnailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] ?? null;
-    setThumbnailFile(file);
+    setThumbnailFile(e.target.files?.[0] ?? null);
+    e.target.value = "";
   };
 
   return (
     <div className="space-y-6">
+      {/* Video */}
       <div>
-        <label className="block text-sm font-medium text-indigo-950 mb-1.5">
-          Course Video
-        </label>
         <label
-          htmlFor="video-upload"
-          className="flex flex-col items-center justify-center gap-1.5 border-2 border-dashed border-indigo-200 bg-indigo-50/60 hover:bg-indigo-50 rounded-xl p-6 cursor-pointer transition-colors duration-200"
+          className="block font-data text-[11px] font-medium uppercase tracking-[0.18em] mb-2"
+          style={{ color: MUTE }}
         >
-          <svg
-            className="w-7 h-7 text-indigo-400"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1.5}
-              d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-            />
-          </svg>
-          <span className="text-sm text-indigo-700 font-medium">
-            {videoFile ? "Replace video" : "Click to upload a video"}
-          </span>
-          <span className="text-xs text-gray-400">MP4, MOV up to 200MB</span>
-          <input
-            id="video-upload"
-            type="file"
-            accept="video/*"
-            onChange={handleVideoChange}
-            className="hidden"
-          />
-        </label>
-        {videoFile && (
-          <p className="text-xs text-gray-500 mt-2 px-1">
-            Selected: <span className="font-medium">{videoFile.name}</span>{" "}
-            ({(videoFile.size / (1024 * 1024)).toFixed(1)} MB)
-          </p>
-        )}
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-indigo-950 mb-1.5">
-          Course Thumbnail
+          Course video
         </label>
 
-        {thumbnailFile ? (
-          <label
-            htmlFor="thumbnail-upload"
-            className="block relative w-full h-36 rounded-xl overflow-hidden cursor-pointer group"
+        {videoFile ? (
+          <div
+            className="flex items-center gap-3 rounded-xl border p-3.5"
+            style={{ borderColor: RULE, background: "#FFFFFF" }}
           >
-            <img
-              src={URL.createObjectURL(thumbnailFile)}
-              alt="Thumbnail preview"
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-indigo-950/0 group-hover:bg-indigo-950/40 flex items-center justify-center transition-colors duration-200">
-              <span className="text-white text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                Change thumbnail
-              </span>
+            <div
+              className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+              style={{ background: THUMB_BG }}
+            >
+              <HiOutlineFilm className="w-5 h-5" style={{ color: SIGNAL }} />
             </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-semibold truncate" style={{ color: INK }}>
+                {videoFile.name}
+              </p>
+              <p className="font-data text-[11px]" style={{ color: MUTE }}>
+                {formatSize(videoFile.size)}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setVideoFile(null)}
+              className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors cursor-pointer hover:brightness-95"
+              style={{ background: THUMB_BG }}
+              aria-label="Remove video"
+            >
+              <HiOutlineXMark className="w-4 h-4" style={{ color: MUTE }} />
+            </button>
+          </div>
+        ) : (
+          <label
+            htmlFor="video-upload"
+            className="flex flex-col items-center justify-center gap-2 rounded-[18px] border-2 border-dashed p-7 cursor-pointer transition-colors duration-200 hover:brightness-[0.98]"
+            style={{ borderColor: RULE, background: THUMB_BG }}
+          >
+            <HiOutlineCloudArrowUp className="w-7 h-7" style={{ color: MUTE }} />
+            <span className="text-sm font-semibold" style={{ color: INK }}>
+              Click to upload a video
+            </span>
+            <span className="font-data text-[11px]" style={{ color: MUTE }}>
+              MP4, MOV up to 200MB
+            </span>
             <input
-              id="thumbnail-upload"
+              id="video-upload"
               type="file"
-              accept="image/*"
-              onChange={handleThumbnailChange}
+              accept="video/*"
+              onChange={handleVideoChange}
               className="hidden"
             />
           </label>
+        )}
+      </div>
+
+      {/* Thumbnail */}
+      <div>
+        <label
+          className="block font-data text-[11px] font-medium uppercase tracking-[0.18em] mb-2"
+          style={{ color: MUTE }}
+        >
+          Course thumbnail
+        </label>
+
+        {thumbnailFile && thumbnailUrl ? (
+          <div className="relative w-full h-40 rounded-[18px] overflow-hidden group" style={{ background: THUMB_BG }}>
+            <img src={thumbnailUrl} alt="Thumbnail preview" className="w-full h-full object-cover" />
+            <label
+              htmlFor="thumbnail-upload"
+              className="absolute inset-0 flex items-center justify-center bg-[#14213D]/0 group-hover:bg-[#14213D]/40 transition-colors duration-200 cursor-pointer"
+            >
+              <span className="text-white text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                Change thumbnail
+              </span>
+              <input
+                id="thumbnail-upload"
+                type="file"
+                accept="image/*"
+                onChange={handleThumbnailChange}
+                className="hidden"
+              />
+            </label>
+            <button
+              type="button"
+              onClick={() => setThumbnailFile(null)}
+              className="absolute top-2.5 right-2.5 w-7 h-7 rounded-full flex items-center justify-center transition-colors cursor-pointer hover:brightness-110"
+              style={{ background: "rgba(20,33,61,0.75)" }}
+              aria-label="Remove thumbnail"
+            >
+              <HiOutlineXMark className="w-4 h-4" style={{ color: "#FBFAF7" }} />
+            </button>
+          </div>
         ) : (
           <label
             htmlFor="thumbnail-upload"
-            className="flex flex-col items-center justify-center gap-1.5 border-2 border-dashed border-violet-200 bg-violet-50/60 hover:bg-violet-50 rounded-xl p-6 cursor-pointer transition-colors duration-200"
+            className="flex flex-col items-center justify-center gap-2 rounded-[18px] border-2 border-dashed p-7 cursor-pointer transition-colors duration-200 hover:brightness-[0.98]"
+            style={{ borderColor: RULE, background: THUMB_BG }}
           >
-            <svg
-              className="w-7 h-7 text-violet-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
+            <svg className="w-7 h-7" style={{ color: MUTE }} fill="none" viewBox="0 0 24 24">
               <path
+                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14M14 8h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                stroke="currentColor"
+                strokeWidth="1.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14M14 8h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
               />
             </svg>
-            <span className="text-sm text-violet-700 font-medium">
+            <span className="text-sm font-semibold" style={{ color: INK }}>
               Click to upload a thumbnail
             </span>
-            <span className="text-xs text-gray-400">PNG, JPG recommended</span>
+            <span className="font-data text-[11px]" style={{ color: MUTE }}>
+              PNG, JPG recommended
+            </span>
             <input
               id="thumbnail-upload"
               type="file"
@@ -126,6 +178,10 @@ function Step2({
           </label>
         )}
       </div>
+
+      <p className="text-xs leading-relaxed" style={{ color: MUTE }}>
+        Both are optional — you can add or replace them later from the course dashboard.
+      </p>
     </div>
   );
 }
